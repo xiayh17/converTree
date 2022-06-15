@@ -1,0 +1,20 @@
+Package: converTree
+Type: Package
+Title: Convert Tree Formats
+Version: 0.1.0
+Authors@R: c(
+        person(given = "Yonghe",
+           family = "Xia",
+           role = c("aut", "ctb", "cre"),
+           email = "xiayh17@gmail.com")
+    )
+Maintainer: Yonghe Xia <xiayh17@gmail.com>
+Description: Convert tree formats between newick, parent vector and 
+    ancestor matrix. Core code modified from https://github.com/cbg-ethz/infSCITE.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    Rcpp
+LinkingTo: Rcpp
+RoxygenNote: 7.2.0
