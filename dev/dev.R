@@ -20,3 +20,6 @@ devtools::build(".")
 
 ## more document
 # usethis::use_pkgdown()
+
+## push to github
+usethis::use_github()
