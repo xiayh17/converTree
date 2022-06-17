@@ -14,6 +14,7 @@ BugReports: https://github.com/xiayh17/converTree/issues
 Imports: 
     ape,
     dplyr,
+    magrittr,
     Rcpp,
     treeio
 LinkingTo: 
