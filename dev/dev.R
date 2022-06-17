@@ -6,8 +6,7 @@ usethis::use_mit_license("YongheXia")
   library.dynam.unload("converTree", libpath)
 }
 
-## update readme
-devtools::build_readme()
+
 
 ## update document
 devtools::document(".")
@@ -18,8 +17,15 @@ devtools::load_all(".")
 ## build
 devtools::build(".")
 
+## add dependecies
+# pak::pkg_install("attachment")
+attachment::att_amend_desc()
+
+## update readme
+devtools::build_readme()
+
 ## more document
 # usethis::use_pkgdown()
 
 ## push to github
-usethis::use_github()
+# usethis::use_github()
