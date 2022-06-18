@@ -1,12 +1,4 @@
-url: http://xiayh17.top/converTree
-
-development:
-  mode: auto
-
+url: http://xiayh17.top/converTree/
 template:
-  params:
-    bootswatch: cosmo
+  bootstrap: 5
 
-authors:
-  Yonghe Xia:
-    href: https://github.com/xiayh17

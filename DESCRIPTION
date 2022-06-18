@@ -9,7 +9,8 @@ Description: Convert tree formats between newick, parent vector and
     ancestor matrix. Core code modified from
     https://github.com/cbg-ethz/infSCITE.
 License: MIT + file LICENSE
-URL: https://github.com/xiayh17/converTree
+URL: https://github.com/xiayh17/converTree,
+    http://xiayh17.top/converTree/
 BugReports: https://github.com/xiayh17/converTree/issues
 Imports: 
     ape,
@@ -19,6 +20,8 @@ Imports:
     treeio
 LinkingTo: 
     Rcpp
+Suggests:
+    ggtree
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.0
