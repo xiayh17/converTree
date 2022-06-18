@@ -40,6 +40,8 @@ library(converTree)
 
 ## 1. Convert tree format 
 
+Functions of these module using Rcpp that convert tree format
+is a interface of R for code from https://github.com/cbg-ethz/infSCITE.
 Convert tree format among newick, parent vector and ancestor matrix.
 convert like so:
 
