@@ -3,7 +3,7 @@ Package: converTree
 Title: Convert Tree Formats
 Version: 0.1.0
 Authors@R: 
-    person("Yonghe", "Xia", , "xiayh17@gmail.com", role = c("aut", "ctb", "cre"))
+    person("Yonghe", "Xia", "xiayh17@gmail.com", role = c("aut", "ctb", "cre"))
 Maintainer: Yonghe Xia <xiayh17@gmail.com>
 Description: Convert tree formats between newick, parent vector and
     ancestor matrix. Core code modified from
