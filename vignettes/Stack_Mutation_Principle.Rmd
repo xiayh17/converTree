@@ -1,0 +1,61 @@
+---
+title: "Stack_Mutation_Principle"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Stack_Mutation_Principle}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(converTree)
+suppressMessages(library(ggtree))
+suppressMessages(library(treeio))
+```
+
+Every mutation tree from infSCITE is formatted as parent Vector in sample file. For example:
+
+```{r}
+pvtre <- "11 2 3 14 14 16 8 6 9 1 15 8 10 14 5 13 17"
+```
+
+We can reformat it to nwk that is a format easy to be visualization.
+
+```{r}
+# reformat
+reformatParentVector <- function(pvtre) {
+  
+  lapply((strsplit(pvtre,"[ ]",)), function(x){
+    as.integer(x)
+  }) |> unlist()
+  
+}
+pvtre1 = reformatParentVector(pvtre)
+# convert to nwk
+nwk_text <- parentVector2nwk(pvtre1,17)
+nwk_text
+```
+
+Plot a mutation tree. In order to clearly display the structure of the tree. Red points and red numbers represent a mutation node (label in table). Black numbers mean the order of node in tree, from leaves to internal nodes (parent and node in table).
+
+```{r, fig.align='center', fig.width=6, fig.height=6, fig.fullwidth=TRUE, fig.cap='Mutation Tree'}
+tre <- treeio::read.newick(text = nwk_text)
+ggtree(tre) + 
+  geom_nodepoint(size = 1,color = "red",shape = 20) +
+  geom_nodelab(color = "red",nudge_y = 0.1)+
+  geom_nodelab(aes(label = node))+
+  geom_tippoint(size = 1,color = "red",shape = 20)+
+  geom_tiplab(color = "red",nudge_y = 0.1)+
+  geom_tiplab(aes(label = node))
+tre_dat <- tre %>% as_tibble()
+tre_dat
+```
+
+![tree data tree structure](images/Snipaste_2022-06-20_15-19-15.png){width="100%"}
