@@ -59,3 +59,9 @@ tre_dat
 ```
 
 ![tree data tree structure](images/Snipaste_2022-06-20_15-19-15.png){width="100%"}
+
+Root, leaf and internal nodes will be kept and recode and all node in branch will move to the nearest node.
+
+For example, node 6 and 7 with label 13 and 16 will move to node 8 and node 8 will re-code to 6 for root is 5 and re-label with 13,6,15
+
+![re-code and re-labeled tree](images/README-unnamed-chunk-3-1.png)
