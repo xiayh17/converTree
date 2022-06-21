@@ -4,7 +4,6 @@ development:
   mode: auto
 
 template:
-  bootstrap: 5
   params:
     bootswatch: cosmo
     ganalytics: G-P6LX4XX7Y4
