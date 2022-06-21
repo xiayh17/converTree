@@ -1,4 +1,29 @@
 url: http://xiayh17.top/converTree/
+
+development:
+  mode: auto
+
 template:
   bootstrap: 5
+  params:
+    bootswatch: cosmo
+    ganalytics: G-P6LX4XX7Y4
 
+authors:
+  Yonghe Xia:
+    href: https://github.com/xiayh17
+
+navbar:
+  title: converTree
+  left:
+    - icon: fa-home
+      href: index.html
+    - text: Functions
+      icon: fa-code
+      href: reference/index.html
+    - text: "Guide"
+      icon: paper-plane
+      menu:
+        - text: Stack Mutations
+        - text: "What happened of stack_mutationTree"
+          href: articles/Stack_Mutation_Principle.html
