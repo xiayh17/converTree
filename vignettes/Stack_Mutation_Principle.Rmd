@@ -46,7 +46,7 @@ nwk_text
 
 Plot a mutation tree. In order to clearly display the structure of the tree. Red points and red numbers represent a mutation node (label in table). Black numbers mean the order of node in tree, from leaves to internal nodes (parent and node in table).
 
-```{r, fig.align='center', fig.width=6, fig.height=6, fig.fullwidth=TRUE, fig.cap='Mutation Tree'}
+```{r, fig.align='center', fig.height=6, fig.fullwidth=TRUE, fig.cap='Mutation Tree'}
 tre <- treeio::read.newick(text = nwk_text)
 mtr <- ggtree(tre) + 
   geom_nodepoint(size = 1,color = "red",shape = 20) +
