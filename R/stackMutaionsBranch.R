@@ -5,7 +5,7 @@
 #'
 #' @param tre a mutation tree
 #' @importFrom treeio as_tibble
-#' @importFrom dplyr bind_rows pull distinct mutate rename group_modify group_by arrange n
+#' @importFrom dplyr bind_rows pull distinct mutate rename group_modify group_by arrange n full_join select
 #' @importFrom ape as.phylo
 #'
 #' @return
@@ -101,7 +101,11 @@ stack_mutationTree <- function(tre) {
     tmp2 <- leaf_df[index2,]
 
     ## for parent not in branch
-    tmp1$parentN <- unique(in_df[in_df$parent == tmp1$parent,]$parentN)
+    tmp_0 <- unique(in_df[in_df$parent %in% tmp1$parent,])[,c("parent","parentN")]
+    tmp1 <- dplyr::full_join(tmp1,tmp_0,by = "parent",) %>%
+      dplyr::mutate(parentN = ifelse(identical("",parentN.x), parentN.x, parentN.y)) %>%
+      dplyr::select(parent,  node, label, parentN)
+    
     ## for parent in branch
     find_real_leafsP <- function(leafsP){
       while (!(leafsP %in% root_df$parent | leafsP %in% in_df$parent)) {
