@@ -16,10 +16,10 @@ knitr::opts_chunk$set(
 # converTree
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
-The goal of converTree is to convert tree format among newick, parent vector and 
-ancestor matrix.
+The goal of converTree is to convert tree format among newick, parent vector and ancestor matrix.
 
 ## Installation
 
@@ -38,12 +38,9 @@ library(converTree)
 ## basic example code
 ```
 
-## 1. Convert tree format 
+## 1. Convert tree format
 
-Functions of these module using Rcpp that convert tree format
-is a interface of R for code from https://github.com/cbg-ethz/infSCITE.
-Convert tree format among newick, parent vector and ancestor matrix.
-convert like so:
+Functions of these module using Rcpp that convert tree format is a interface of R for code from <https://github.com/cbg-ethz/infSCITE>. Convert tree format among newick, parent vector and ancestor matrix. convert like so:
 
 ```{r test, eval=FALSE}
 ## parent vector > child list > nwk
@@ -65,11 +62,14 @@ nwk2parentVector(nwk,n=16)
 nwk2anc(nwk)
 ```
 
+![full convert](man/figures/Snipaste_2022-08-15_17-27-09.png)
+
 ## 2. Stack mutation tree
 
 Stack mutations in branch and set branch length to number of mutations.
 
-- Here is a normal mutation tree
+-   Here is a normal mutation tree
+
 ```{r}
 suppressMessages(library(ggtree))
 library(converTree)
@@ -85,7 +85,8 @@ ggtree(tre) +
 
 ```
 
-- Here is a tree after stack
+-   Here is a tree after stack
+
 ```{r}
 stre <- stack_mutationTree(tre)
 ggtree(stre)+
@@ -99,6 +100,4 @@ ggtree(stre)+
   scale_x_continuous(breaks = c(0:10), limits = c(0,12))
 ```
 
-
 You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/v1/examples>.
-

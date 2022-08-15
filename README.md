@@ -53,6 +53,8 @@ nwk2parentVector(nwk,n=16)
 nwk2anc(nwk)
 ```
 
+![full convert](man/figures/Snipaste_2022-08-15_17-27-09.png)
+
 ## 2. Stack mutation tree
 
 Stack mutations in branch and set branch length to number of mutations.
