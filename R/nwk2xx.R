@@ -37,7 +37,7 @@ nwk2anc <- function(nwk) {
   ## retrieve tree to matrix
   for (i in 1:nrow(noroot_data)) {
 
-    print(i)
+    # print(i)
     x = noroot_data[i,1] %>% as.numeric() %>% test_fact[.]
     y = noroot_data[i,2] %>% as.numeric() %>% test_fact[.]
     fm[x,y] <- 1
@@ -61,7 +61,7 @@ nwk2anc <- function(nwk) {
 #' @examples
 #' p = c(11, 2, 3, 14, 14, 16, 8, 6, 9, 1, 15, 8, 10, 14, 5, 13, 17)
 #' nwk = parentVector2nwk(parents=p,n = 16)
-#' nwk2parentVector(nwk)
+#' nwk2parentVector(nwk,n=16)
 nwk2parentVector <- function(nwk,n) {
 
   ##to matrix

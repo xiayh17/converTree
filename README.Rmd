@@ -59,6 +59,10 @@ anc <- parentVector2anc(parents=p,n = 16)
 anc2parentVector(anc=anc,n=16)
 ## anc > nwk
 anc2nwk(anc=anc,n=16)
+## nwk > parent vector
+nwk2parentVector(nwk,n=16)
+## nwk > anc
+nwk2anc(nwk)
 ```
 
 ## 2. Stack mutation tree

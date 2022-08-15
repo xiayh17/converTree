@@ -1,2 +1,2 @@
 utils::globalVariables(c("parent", "nodeN", "parentN",
-                         "labelN", "parent", "node", "label"))
+                         "labelN", "parent", "node", "label","."))
