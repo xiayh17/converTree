@@ -25,9 +25,12 @@ nwk2anc <- function(nwk) {
   noroot_data <- tree_data[!tree_data$parent == tree_data$node,]
 
   ## replace by labels
-  test_fact <- with(noroot_data,factor(label,
-                                       levels = unique(label),
-                                       labels = unique(label)))
+  ## replace by labels
+  test_fact <- function(x){
+
+    as.numeric(noroot_data[noroot_data$node == x,"label"])
+
+  }
 
   ## init  matrix
   dims <- pull(noroot_data,node) %>% length()
@@ -38,8 +41,8 @@ nwk2anc <- function(nwk) {
   for (i in 1:nrow(noroot_data)) {
 
     # print(i)
-    x = noroot_data[i,1] %>% as.numeric() %>% test_fact[.]
-    y = noroot_data[i,2] %>% as.numeric() %>% test_fact[.]
+    x = noroot_data[i,1] %>% as.numeric() %>% test_fact(.)
+    y = noroot_data[i,2] %>% as.numeric() %>% test_fact(.)
     fm[x,y] <- 1
 
   }
