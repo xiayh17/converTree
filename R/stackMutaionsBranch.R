@@ -35,190 +35,210 @@
 #'   scale_x_continuous(breaks = c(0:10), limits = c(0,12))
 stack_mutationTree <- function(tre) {
 
-  ## tree to data ----
-  tre_dat <- tre %>% treeio::as_tibble()
+  # tree in data frame format
+  tre_dat <-  tre %>%
+    as_tibble()
 
-  ## subset tree data by node and tip ----
-  root_df <- tre_dat[tre_dat$parent == tre_dat$node,]
-  leaf_df <- tre_dat[!tre_dat$node %in% tre_dat$parent,]
-  # node internal
-  dt_tmp <- as.data.frame(table(tre_dat$parent))
-  in_node <- dt_tmp$Var1[dt_tmp$Freq >= 2 & dt_tmp$Var1 != root_df$parent]
-  in_df <- tre_dat[tre_dat$parent %in% in_node & !(tre_dat$node %in% leaf_df$node),]
-  # node only in branch
-  b_df <- tre_dat[!tre_dat$node %in% root_df$node & !tre_dat$parent %in% in_df$parent & !tre_dat$node %in% leaf_df$node,]
+  # nodes
+  tre_dat2 <- tre_dat %>%
+    group_by(parent) %>%
+    mutate(cn = n())
 
-  # function for find new number ----
-  indf_new <- function(in_df) {
+  node_index <- factor(tre_dat2$node, labels = tre_dat2$label)
+  tre_dat2$parent_label <- node_index[tre_dat2$parent]
 
-    ## for parent
-    in_df$parentN <- ""
-    in_df$parentN <- factor(x=in_df$parent,labels = order(unique(in_df$parent))) %>% as.numeric()
-    in_df$parentN <- in_df$parentN+root_df$parent[1]
+  # split node
+  tre_dat2$group <- NA
 
-    ## node
-    ## for node with leaf
-    in_df_o <- in_df[in_df$node %in% leaf_df$node,]
-    ## for node with leaf branch
-    in_df_m <- in_df[!in_df$node %in% leaf_df$node,]
-    index_branch_leaf <- apply(in_df_m, 1, function(x){
+  tre_dat2$group[tre_dat2$node == tre_dat2$parent] = "root"
+  tre_dat2$group[!tre_dat2$node %in% tre_dat2$parent] = "leaf"
+  root_df = tre_dat2[tre_dat2$group == "root",] %>% na.omit()
+  leaf_df = tre_dat2[tre_dat2$group == "leaf",] %>% na.omit()
 
-      all(as.numeric(x["node"]) > in_df_m$parent)
+  real_nodes = tre_dat2$parent[tre_dat2$cn >= 2 & is.na(tre_dat2$group)] %>% unique()
+  real_nodes = real_nodes[real_nodes != root_df$node]
+  tre_dat2$group[tre_dat2$node %in% real_nodes] = "nodes"
 
-    })
-    in_df_i <- in_df_m[!index_branch_leaf,]
-    in_df_b <- in_df_m[index_branch_leaf,]
-    # internal node
-    in_df_i$nodeN <- in_df_i$parentN+1
-    # link to leaf inderectly
-    # find node to leaf
-    find_real_leafs <- function(leafsP){
+  tre_dat2$group[is.na(tre_dat2$group)] = "branch"
 
-      while (!leafsP %in% leaf_df$node) {
-        leafsP <- tre_dat[tre_dat$parent == leafsP,]$node
-      }
-      return(leafsP)
-    }
-    ## find
-    in_df_b$nodeN <- apply(in_df_b, 1, function(x){
-      tmp = x["node"]
-      t <- find_real_leafs(tmp)
-      return(t)
-    })
+  # node recount
+  in_df = tre_dat2[tre_dat2$group == "nodes",]
+  br_df = tre_dat2[tre_dat2$group == "branch",]
 
-    dplyr::bind_rows(in_df_o,in_df_i,in_df_b)
-
-  }
-
-  leaf_new <- function(leaf_df) {
-
-    leaf_df$parentN <- ""
-    ## parent is not real node or root
-    index1 <- leaf_df$parent %in% in_df$parent | leaf_df$parent %in% root_df$parent
-    tmp1 <- leaf_df[index1,]
-    ## parent in branch
-    index2 <- !(leaf_df$parent %in% in_df$parent | leaf_df$parent %in% root_df$parent)
-    tmp2 <- leaf_df[index2,]
-
-    ## for parent not in branch
-    tmp_0 <- unique(in_df[in_df$parent %in% tmp1$parent,])[,c("parent","parentN")]
-    tmp1 <- dplyr::full_join(tmp1,tmp_0,by = "parent",) %>%
-      dplyr::mutate(parentN = ifelse(identical("",parentN.x), parentN.x, parentN.y)) %>%
-      dplyr::select(parent,  node, label, parentN)
-    
-    ## for parent in branch
-    find_real_leafsP <- function(leafsP){
-      while (!(leafsP %in% root_df$parent | leafsP %in% in_df$parent)) {
-        leafsP <- tre_dat[tre_dat$node == leafsP,]$parent
-      }
-      return(leafsP)
-    }
-    ## find
-    tmp2$parentN <- apply(tmp2, 1, function(x){
-      tmp = x["parent"]
-      t <- find_real_leafsP(tmp)
-      ## real parent new number
-      tt <- unique(in_df[in_df$parent == t,]$parentN)
-      return(tt)
-    })
-
-    ndat <- dplyr::bind_rows(tmp1,tmp2)
-    ndat$nodeN <- ndat$node
-    return(ndat)
-  }
-
-  b_new <- function(b_df) {
-
-    ## find real parent
-    find_real_p <- function(p){
-
-      while (!(p %in% root_df$parent | p %in% in_df$parent)) {
-        p <- tre_dat[tre_dat$node == p,]$parent
-      }
-      return(p)
-
-    }
-    ## find
-    b_df$parentN <- ""
-    b_df$parentN <- apply(b_df, 1, function(x){
-
-      tmp = as.numeric(x["parent"])
-      t <- find_real_p(tmp)
-      t <- as.numeric(t)
-
-      ## real parent new number
-      tt <- unique(in_df[in_df$parent == t,]$parentN)
-
-      if(identical(numeric(0),tt)){
-        tt <- unique(root_df[root_df$parent == t,]$parentN)
-      }
-
-      return(tt)
-    })
-
-
-    ## find real node
-    find_real_l <- function(l){
-
-      while (!(l %in% leaf_df$node | l %in% in_df$parent)) {
-        l <- tre_dat[tre_dat$parent == l,]$node
-      }
-      return(l)
-
-    }
-    ## find
-    b_df$nodeN <- apply(b_df, 1, function(x){
-      tmp = as.numeric(x["node"])
-      t <- find_real_l(tmp)
-      t <- as.numeric(t)
-      ## real parent new number
-      tt <- unique(in_df[in_df$parent == t,]$parentN)
-      if(identical(numeric(0),tt)){
-        tt <- unique(leaf_df[leaf_df$node == t,]$nodeN)
-      }
-      return(tt)
-    })
-
-    return(b_df)
-
-  }
-
-
-  ## end of functions -----
-
-  # find new node and parent ----
-  root_df$parentN <- ""
+  root_df$parentN <- NULL
   root_df$parentN <- root_df$parent
   root_df$nodeN <- root_df$node
+  root_node_ = root_df$parent[1]
 
-  in_df <- indf_new(in_df)
-  leaf_df <- leaf_new(leaf_df)
-  b_df <- b_new(b_df)
+  ## real parent node should be recount from root
+  in_df$parentN <- NULL
+  in_df$nodeN <- factor(x=in_df$node,labels = order(unique(in_df$node))) %>% as.numeric()
+  in_df$nodeN <- in_df$nodeN+root_node_
+  ## real child node should be recount from root
 
-  new_tree <- dplyr::bind_rows(root_df,leaf_df,in_df,b_df)
+  ## for parent in branch
+  find_real_fp <- function(fp){
+
+    while (!(fp %in% root_df$parent | fp %in% in_df$node)) {
+      fp <- tre_dat2[tre_dat2$node == fp,]$parent
+    }
+    return(fp)
+
+  }
+
+  in_index <- function(x) {
+    in_df[in_df$node == x,]$nodeN
+  }
+
+
+
+  in_df$parentN <- apply(in_df, 1, function(i){
+    tmp = as.numeric(i["parent"])
+    t <- find_real_fp(tmp)
+
+    if (t == root_node_) {
+      root_node_
+    } else {
+      in_index(t)
+    }
+
+  }) %>% unlist()
+
+
+
+  leaf_df$parentN <- NULL
+  ## parent is not real node or root
+  index1 <- leaf_df$parent %in% br_df$parent
+  tmp1 <- leaf_df[index1,]
+
+  ## parent in real node
+  tmp1$parentN <- sapply(tmp1$parent,in_index)
+  tmp1$nodeN <- tmp1$node
+
+  ## parent in branch
+  index2 <- !index1
+  tmp2 <- leaf_df[index2,]
+
+  ## for parent in branch
+  find_real_leafsP <- function(leafsP){
+    while (!(leafsP %in% root_df$parent | leafsP %in% in_df$node)) {
+      leafsP <- tre_dat2[tre_dat2$node == leafsP,]$parent
+    }
+    return(leafsP)
+  }
+
+  ## find real node
+  leaf_index <- function(x) {
+
+    tmp_df <- data.frame(
+      nodes = c(in_df$parent, in_df$node),
+      N = c(in_df$parentN, in_df$nodeN)
+    ) %>% unique()
+    tmp_df[tmp_df$nodes == x,]$N
+
+  }
+
+  tmp2$parentN <- apply(tmp2, 1, function(i){
+    tmp = as.numeric(i["parent"])
+    t <- find_real_leafsP(tmp)
+
+    if (t == root_node_) {
+      root_node_
+    } else {
+      leaf_index(t)
+    }
+
+  }) %>% unlist()
+
+  tmp2$nodeN <- tmp2$node
+
+  leaf_df <- dplyr::bind_rows(tmp1,tmp2)
+
+  ## br_df
+  ## find real parent
+  find_real_p <- function(p){
+
+    while (!(p %in% root_df$parent | p %in% in_df$node)) {
+      p <- tre_dat2[tre_dat2$node == p,]$parent
+    }
+    return(p)
+
+  }
+  ## find
+  br_df$parentN <- NULL
+  br_df$parentN <- apply(br_df, 1, function(x){
+
+    tmp = as.numeric(x["parent"])
+    t <- find_real_p(tmp)
+
+    ## real parent new number
+    if (t == root_node_) {
+      root_node_
+    } else {
+      leaf_index(t)
+    }
+
+  }) %>% unlist()
+
+
+  ## find real node
+  find_real_l <- function(l){
+
+    while (!(l %in% leaf_df$node | l %in% in_df$node)) {
+      l <- tre_dat2[tre_dat2$parent == l,]$node
+    }
+    return(l)
+
+  }
+
+  leaf_index2 <- function(x) {
+
+    tmp_df <- data.frame(
+      nodes = c(in_df$parent, in_df$node, leaf_df$parent,leaf_df$node),
+      N = c(in_df$parentN, in_df$nodeN, leaf_df$parentN,leaf_df$nodeN)
+    ) %>% unique()
+    tmp_df[tmp_df$nodes == x,]$N
+
+  }
+
+  ## find
+  br_df$nodeN <- apply(br_df, 1, function(x){
+    tmp = as.numeric(x["node"])
+    t <- find_real_l(tmp)
+
+    ## real parent new number
+    if (t == root_node_) {
+      root_node_
+    } else {
+      leaf_index2(t)
+    }
+
+  }) %>% unlist()
+
+  ## recombined
+  new_tree <- dplyr::bind_rows(root_df,leaf_df,in_df,br_df)
 
   ## to tree ----
   ## add label with stack mutations
-  t2 <- merge(tre_dat,new_tree)
 
   stackMutationLabel <- function(dt) {
 
-    dt$labelN = ""
+    dt$labelN = NULL
     dt2 <- dplyr::arrange(dt,parent)
     dt2$labelN = paste0(dt2$label,collapse = "|")
     return(dt2)
 
   }
 
-  t22 <- t2 %>%
-    dplyr::group_by(nodeN) %>%
+  t22 <- new_tree %>%
+    dplyr::group_by(parentN,nodeN) %>%
     dplyr::group_modify(~ {
       .x %>%
         stackMutationLabel
     })
 
   ## add branch length
-  nt2 <- t22[,c(5,1,6)] %>% dplyr::rename(parent = parentN, node = nodeN, label = labelN) %>%
+  nt2 <- t22[,c("parentN","nodeN","labelN")] %>% dplyr::rename(parent = parentN, node = nodeN, label = labelN) %>%
     dplyr::group_by(parent, node) %>%
     dplyr::mutate(branch.length = dplyr::n())%>%
     dplyr::distinct()
@@ -230,8 +250,15 @@ stack_mutationTree <- function(tre) {
   ## convert to phylo format
   nttre2 <- nt2 %>% ape::as.phylo(length = "branch.length")
   ## fix label info
-  nttre2[["node.label"]] <- dplyr::pull(nt2[nt2$node %in% nttre2[["node.label"]],],label)
-  nttre2[["tip.label"]] <- dplyr::pull(nt2[nt2$node %in% nttre2[["tip.label"]],],label)
+  index_label <- function(node) {
+
+    nt2[nt2$node==node,]$label
+
+  }
+
+  nttre2[["node.label"]] <- Map(index_label,nttre2[["node.label"]]) %>% unlist()
+  nttre2[["tip.label"]] <- Map(index_label,nttre2[["tip.label"]]) %>% unlist()
+
   return(nttre2)
 
 }
