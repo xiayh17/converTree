@@ -16,8 +16,7 @@ Imports:
     dplyr,
     magrittr,
     Rcpp,
-    treeio,
-    utils
+    treeio
 Suggests:
     ggtree,
     gridExtra,

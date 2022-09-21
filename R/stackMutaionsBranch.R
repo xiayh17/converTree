@@ -7,6 +7,7 @@
 #' @importFrom treeio as_tibble
 #' @importFrom dplyr bind_rows pull distinct mutate rename group_modify group_by arrange n full_join select
 #' @importFrom ape as.phylo
+#' @importFrom stats na.omit
 #'
 #' @return
 #' a tree of class "phylo"
