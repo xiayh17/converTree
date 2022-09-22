@@ -53,8 +53,10 @@ stack_mutationTree <- function(tre) {
 
   tre_dat2$group[tre_dat2$node == tre_dat2$parent] = "root"
   tre_dat2$group[!tre_dat2$node %in% tre_dat2$parent] = "leaf"
-  root_df = tre_dat2[tre_dat2$group == "root",] %>% na.omit()
-  leaf_df = tre_dat2[tre_dat2$group == "leaf",] %>% na.omit()
+  root_df = tre_dat2[tre_dat2$group == "root",]
+  root_df = root_df[rowSums(is.na(root_df)) != ncol(root_df), ]
+  leaf_df = tre_dat2[tre_dat2$group == "leaf",]
+  leaf_df = leaf_df[rowSums(is.na(leaf_df)) != ncol(leaf_df), ]
 
   real_nodes = tre_dat2$parent[tre_dat2$cn >= 2 & is.na(tre_dat2$group)] %>% unique()
   real_nodes = real_nodes[real_nodes != root_df$node]
