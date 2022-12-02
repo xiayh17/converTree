@@ -15,8 +15,13 @@ Imports:
     ape,
     dplyr,
     magrittr,
+    plyr,
     Rcpp,
-    treeio
+    readr,
+    stats,
+    tidyr,
+    treeio,
+    utils
 Suggests:
     ggtree,
     gridExtra,
