@@ -10,6 +10,9 @@
     <loc>http://xiayh17.top/converTree/LICENSE.html</loc>
   </url>
   <url>
+    <loc>http://xiayh17.top/converTree/articles/CFmatrix_convert_and_plot.html</loc>
+  </url>
+  <url>
     <loc>http://xiayh17.top/converTree/articles/Stack_Mutation_Principle.html</loc>
   </url>
   <url>
@@ -29,6 +32,9 @@
   </url>
   <url>
     <loc>http://xiayh17.top/converTree/reference/ancMatrixToParVector.html</loc>
+  </url>
+  <url>
+    <loc>http://xiayh17.top/converTree/reference/cf2treedata.html</loc>
   </url>
   <url>
     <loc>http://xiayh17.top/converTree/reference/childList2nwk.html</loc>
@@ -62,5 +68,8 @@
   </url>
   <url>
     <loc>http://xiayh17.top/converTree/reference/stack_mutationTree.html</loc>
+  </url>
+  <url>
+    <loc>http://xiayh17.top/converTree/reference/treedata2gv.html</loc>
   </url>
 </urlset>

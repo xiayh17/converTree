@@ -98,7 +98,9 @@
 <div class="section level1">
 <div class="page-header"><h1 id="convertree">converTree<a class="anchor" aria-label="anchor" href="#convertree"></a>
 </h1></div>
-<!-- badges: start --><!-- badges: end --><p>The goal of converTree is to convert tree format among newick, parent vector and ancestor matrix.</p>
+<!-- badges: start -->
+<!-- badges: end -->
+<p>The goal of converTree is to convert tree format among newick, parent vector and ancestor matrix.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -115,7 +117,7 @@
 <span><span class="co">## basic example code</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="1-convert-tree-format">1. Convert tree format<a class="anchor" aria-label="anchor" href="#1-convert-tree-format"></a>
+<h2 id="id_1-convert-tree-format">1. Convert tree format<a class="anchor" aria-label="anchor" href="#id_1-convert-tree-format"></a>
 </h2>
 <p>Functions of these module using Rcpp that convert tree format is a interface of R for code from <a href="https://github.com/cbg-ethz/infSCITE" class="external-link uri">https://github.com/cbg-ethz/infSCITE</a>. Convert tree format among newick, parent vector and ancestor matrix. convert like so:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -141,10 +143,12 @@
 </div>
 </div>
 <div class="section level2">
-<h2 id="2-stack-mutation-tree">2. Stack mutation tree<a class="anchor" aria-label="anchor" href="#2-stack-mutation-tree"></a>
+<h2 id="id_2-stack-mutation-tree">2. Stack mutation tree<a class="anchor" aria-label="anchor" href="#id_2-stack-mutation-tree"></a>
 </h2>
 <p>Stack mutations in branch and set branch length to number of mutations.</p>
-<ul><li>Here is a normal mutation tree</li></ul>
+<ul>
+<li>Here is a normal mutation tree</li>
+</ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.amazon.com/Integration-Manipulation-Visualization-Phylogenetic-Computational-ebook/dp/B0B5NLZR1Z/" class="external-link">ggtree</a></span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/xiayh17/converTree" class="external-link">converTree</a></span><span class="op">)</span></span>
@@ -158,7 +162,9 @@
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html" class="external-link">geom_tiplab</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"red"</span>,nudge_y <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span><span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_tiplab.html" class="external-link">geom_tiplab</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">node</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
-<ul><li>Here is a tree after stack</li></ul>
+<ul>
+<li>Here is a tree after stack</li>
+</ul>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stre</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/stack_mutationTree.html">stack_mutationTree</a></span><span class="op">(</span><span class="va">tre</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html" class="external-link">ggtree</a></span><span class="op">(</span><span class="va">stre</span><span class="op">)</span><span class="op">+</span></span>

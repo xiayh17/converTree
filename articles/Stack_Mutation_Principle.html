@@ -109,10 +109,12 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.amazon.com/Integration-Manipulation-Visualization-Phylogenetic-Computational-ebook/dp/B0B5NLZR1Z/" class="external-link">ggtree</a></span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/YuLab-SMU/treeio" class="external-link">treeio</a></span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">gridExtra</span><span class="op">)</span></span></code></pre></div>
-<p>Every mutation tree from infSCITE is formatted as parent Vector in sample file. For example:</p>
+<p>Every mutation tree from infSCITE is formatted as parent Vector in
+sample file. For example:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pvtre</span> <span class="op">&lt;-</span> <span class="st">"11 2 3 14 14 16 8 6 9 1 15 8 10 14 5 13 17"</span></span></code></pre></div>
-<p>We can reformat it to nwk that is a format easy to be visualization.</p>
+<p>We can reformat it to nwk that is a format easy to be
+visualization.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># reformat</span></span>
 <span><span class="va">reformatParentVector</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">pvtre</span><span class="op">)</span> <span class="op">{</span></span>
@@ -127,7 +129,10 @@
 <span><span class="va">nwk_text</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/parentVector2nwk.html">parentVector2nwk</a></span><span class="op">(</span><span class="va">pvtre1</span>,<span class="fl">17</span><span class="op">)</span></span>
 <span><span class="va">nwk_text</span></span>
 <span><span class="co">#&gt; [1] "((((((((((8)7,(1)12)9)10)2)3)4,5,(((13)11)16)14)15)6)17)18;"</span></span></code></pre></div>
-<p>Plot a mutation tree. In order to clearly display the structure of the tree. Red points and red numbers represent a mutation node (label in table). Black numbers mean the order of node in tree, from leaves to internal nodes (parent and node in table).</p>
+<p>Plot a mutation tree. In order to clearly display the structure of
+the tree. Red points and red numbers represent a mutation node (label in
+table). Black numbers mean the order of node in tree, from leaves to
+internal nodes (parent and node in table).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tre</span> <span class="op">&lt;-</span> <span class="fu">treeio</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/treeio/reference/read.newick.html" class="external-link">read.newick</a></span><span class="op">(</span>text <span class="op">=</span> <span class="va">nwk_text</span><span class="op">)</span></span>
 <span><span class="va">mtr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html" class="external-link">ggtree</a></span><span class="op">(</span><span class="va">tre</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -148,12 +153,17 @@ Mutation Tree
 <div class="figure">
 <img src="images/Snipaste_2022-06-20_15-19-15.png" style="width:100.0%" alt=""><p class="caption">tree data tree structure</p>
 </div>
-<p>Root, leaf and internal nodes will be kept and recode and all node in branch will move to the nearest node.</p>
-<p>For example, node 6 and 7 with label 13 and 16 will move to node 8 and node 8 will re-code to 6 for root is 5 and re-label with 13,6,15. More addition, branch length will be changed according to mutation number.</p>
+<p>Root, leaf and internal nodes will be kept and recode and all node in
+branch will move to the nearest node.</p>
+<p>For example, node 6 and 7 with label 13 and 16 will move to node 8
+and node 8 will re-code to 6 for root is 5 and re-label with 13,6,15.
+More addition, branch length will be changed according to mutation
+number.</p>
 <div class="figure">
 <img src="images/README-unnamed-chunk-3-1.png" alt=""><p class="caption">re-code and re-labeled tree</p>
 </div>
-<p>stack_mutationTree() can be used to complete the transform of re-code and re-label.</p>
+<p>stack_mutationTree() can be used to complete the transform of re-code
+and re-label.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stre</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/stack_mutationTree.html">stack_mutationTree</a></span><span class="op">(</span><span class="va">tre</span><span class="op">)</span></span></code></pre></div>
 <p>Lets check what happened.</p>
