@@ -14,6 +14,7 @@ BugReports: https://github.com/xiayh17/converTree/issues
 Imports: 
     ape,
     dplyr,
+    igraph,
     magrittr,
     plyr,
     Rcpp,
@@ -26,7 +27,9 @@ Suggests:
     ggtree,
     gridExtra,
     knitr,
-    rmarkdown
+    rmarkdown,
+    DiagrammeR,
+    DiagrammeRsvg
 LinkingTo: 
     Rcpp
 VignetteBuilder: 

@@ -265,13 +265,23 @@ cf2treedata <- function(CFmatrix_file) {
 
   # cell
   # cell is a little complex for add leaves to tree
-  # maybe like mutation is a good idea
+  # know which cell will insert others
   for (i in seq_along(same_cells_l)) {
     ele=same_cells_l[[i]]
     if (length(ele) >0 ) {
       cell=names(same_cells_l)[i]
-      new_label=paste0(ele,collapse = "|")
-      t_all$label[t_all$label == cell] = new_label
+      keynode=na.omit(t_all$node[t_all$label == cell])
+      newcell=setdiff(ele,cell)
+      newnode=keynode+(1:length(newcell))
+      newparent=na.omit(t_all$parent[t_all$label == cell])+length(newcell)
+      new_df = data.frame(
+        parent=newparent,
+        node=newnode,
+        label=newcell
+      )
+      t_all$parent=t_all$parent+length(newcell)
+      t_all$node[t_all$node>keynode]=t_all$node[t_all$node>keynode]+length(newcell)
+      t_all=rbind(t_all,new_df)
     }
   }
   # insert duplicate back ---------------------------------------------------
@@ -280,7 +290,89 @@ cf2treedata <- function(CFmatrix_file) {
 
 }
 
-# cf2gvfile <- function(CFmatrix_file) {
-#
-# }
+#' Convert tree data to gv file
+#'
+#' [gv](https://graphviz.org/about/) file is a graph format in dot language.
+#'
+#' @param treedata tree data from cf2treedata
+#' @param gvfile a file name to save result
+#' @param highlight which mutation or cell name to highlight
+#' @param highcolor highlight color
+#' @param is_cell `auto_name` or `auto_position` or a vector list of bool
+#' @param cell_prefix if `auto_name` used in is_cell, a common prefix for cell name
+#' @param cell_style more in [here](https://graphviz.org/docs/attrs/style/)
+#' @param cell_shape more in [here](https://graphviz.org/doc/info/shapes.html)
+#' @param cell_fill more in [here](https://graphviz.org/docs/attrs/fillcolor/)
+#' @param mut_style more in [here](https://graphviz.org/docs/attrs/style/)
+#' @param mut_shape more in [here](https://graphviz.org/doc/info/shapes.html)
+#' @param mut_fill more in [here](https://graphviz.org/docs/attrs/fillcolor/)
+#'
+#' @importFrom igraph graph_from_data_frame vertex.attributes write_graph
+#'
+#' @return a file
+#' @export
+#'
+#' @examples
+#' CFmatrix_file = system.file("extdata", "ground_truth_tree.CFMatrix", package = "converTree")
+#' t_all = cf2treedata(CFmatrix_file)
+#' treedata2gv(t_all,gvfile="tree.gv",highlight = c("M3","M42","M1"))
+treedata2gv<-function(treedata,gvfile="tree.gv",highlight=NULL,highcolor="red",
+                      is_cell="auto_name",cell_prefix="sc",
+                      cell_style="filled",cell_shape="box",cell_fill="white",
+                      mut_style="filled",mut_shape="ellipse",mut_fill="grey82") {
+  edges=treedata[!treedata$parent==treedata$node,1:2]
+  colnames(edges)=c("from","to")
+  nodes=treedata$node
+  treedata$label[is.na(treedata$label)]="-"
+  node_labels=formatNodelabel(treedata$label,highlight=highlight,highcolor=highcolor)
+  ## distinguish cells and mutations
+  if (is_cell=="auto_name") {
+    ## auto_name
+    is_cell = startsWith(treedata$label,"sc")
+  } else if (is_cell=="auto_position") {
+    ## auto_position
+    is_cell = ifelse(treedata$node < root_,TRUE,FALSE)
+  } else if (is_cell=="manually") {
+    ## manually
+    is_cell = is_cell
+  }
 
+  root_ = treedata$node[treedata$parent==treedata$node]
+  g <- igraph::graph_from_data_frame(edges, directed=TRUE, vertices=nodes)
+  vertex.attributes(g)$name=NULL
+  vertex.attributes(g)$label=node_labels
+  vertex.attributes(g)$style=ifelse(is_cell,cell_style,mut_style)
+  vertex.attributes(g)$shape=ifelse(is_cell,cell_shape,mut_shape)
+  vertex.attributes(g)$fillcolor=ifelse(is_cell,cell_fill,mut_fill)
+  igraph::write_graph(g, gvfile, "dot")
+  # read the text file
+  text <- readLines(gvfile)
+
+  # search for the line containing "<NA>" in the label
+  line_index <- which(grepl("label=.*", text))
+
+  # remove the quotation marks from the line
+  text[line_index] <- gsub("label=\"", "label=", text[line_index])
+  text[line_index] <- gsub("\"$", "", text[line_index])
+  text <- gsub('\\\\\"', '\"',text)
+
+  # save the modified text to a new file
+  writeLines(text, gvfile)
+}
+
+## a help function
+formatNodelabel <- function(labels,highlight=NULL,highcolor="red"){
+  if (!is.null(highlight)) {
+
+    for (i in seq_along(highlight)) {
+      key=highlight[i]
+      serch_regrex=paste0("(?<=^|[^A-Za-z0-9])",key,"(?=$|[^A-Za-z0-9])")
+      replace_regrex=paste0('<FONT COLOR="',highcolor,'">',key,'</FONT> ')
+      labels=gsub(serch_regrex,replace_regrex,labels,perl = TRUE)
+    }
+
+  }
+  labels=paste0("<",labels,">")
+  labels=gsub("\\|",'<br/>',labels)
+  return(labels)
+}

@@ -1,0 +1,39 @@
+---
+title: "CFmatrix_convert_and_plot"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{CFmatrix_convert_and_plot}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(converTree)
+```
+
+# convert to normally tree data
+```{r}
+CFmatrix_file = system.file("extdata", "ground_truth_tree.CFMatrix", package = "converTree")
+t_all = cf2treedata(CFmatrix_file)
+```
+
+# vis
+```{r}
+treedata2gv(t_all,gvfile="tree.gv",highlight = c("M3","M42","M1"))
+res=DiagrammeR::grViz("tree.gv")
+res
+```
+
+## save plot to file
+```{r}
+svg=DiagrammeRsvg::export_svg(res)
+writeLines(svg,con = "test.svg")
+```
+
