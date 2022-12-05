@@ -26,3 +26,6 @@ navbar:
         - text: Stack Mutations
         - text: "What happened of stack_mutationTree"
           href: articles/Stack_Mutation_Principle.html
+        - text: CFMatrix convert
+        - text: "CFMatrix convert and plot"
+          href: articles/CFmatrix_convert_and_plot.html
