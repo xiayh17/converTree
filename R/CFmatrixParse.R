@@ -25,7 +25,7 @@ cf2treedata <- function(CFmatrix_file) {
   # duplicate process -------------------------------------------------------
   ## duplicate mutations and cells detecting
   dp_index_mut <- duplicated(t(cf_mat))
-  dp_index_cell <- duplicated(cf_mat2[,-1])
+  dp_index_cell <- duplicated(cf_mat[,-1])
   cf_mat2 <- cf_mat[,!dp_index_mut]
   cf_mat3 <- cf_mat2[!dp_index_cell,]
 
@@ -236,10 +236,21 @@ cf2treedata <- function(CFmatrix_file) {
 
   link_df<-unique(link_df)
 
+  ## map node number to tree data
+  t_root$node <- plyr::mapvalues(t_root$node,
+                                 from = tmp_df$mutIn,
+                                 to = tmp_df$node,
+                                 warn_missing = FALSE) %>% as.numeric()
+
   link_df$label <- plyr::mapvalues(link_df$label,
                                    from = tmp_df$node,
                                    to = tmp_df$mutIn,
                                    warn_missing = FALSE)
+
+  t_leaves$parent <- plyr::mapvalues(t_leaves$parent,
+                                     from = tmp_df$mutIn,
+                                     to = tmp_df$node,
+                                     warn_missing = FALSE) %>% as.numeric()
 
   t_all <- rbind(t_root,t_leaves,link_df)
 
@@ -250,8 +261,8 @@ cf2treedata <- function(CFmatrix_file) {
 
   # insert duplicate back ---------------------------------------------------
   # for each label, is there any duplications?
-  same_cells_l
-  same_columns_l
+  # same_cells_l
+  # same_columns_l
   # mutation
   # mutation is easy as modify label of tree dat
   for (i in seq_along(same_columns_l)) {
@@ -270,7 +281,7 @@ cf2treedata <- function(CFmatrix_file) {
     ele=same_cells_l[[i]]
     if (length(ele) >0 ) {
       cell=names(same_cells_l)[i]
-      keynode=na.omit(t_all$node[t_all$label == cell])
+      keynode=as.numeric(na.omit(t_all$node[t_all$label == cell]))
       newcell=setdiff(ele,cell)
       newnode=keynode+(1:length(newcell))
       newparent=na.omit(t_all$parent[t_all$label == cell])+length(newcell)
@@ -307,7 +318,7 @@ cf2treedata <- function(CFmatrix_file) {
 #' @param mut_shape more in [here](https://graphviz.org/doc/info/shapes.html)
 #' @param mut_fill more in [here](https://graphviz.org/docs/attrs/fillcolor/)
 #'
-#' @importFrom igraph graph_from_data_frame vertex.attributes write_graph
+#' @importFrom igraph graph_from_data_frame vertex.attributes write_graph vertex.attributes<-
 #'
 #' @return a file
 #' @export
