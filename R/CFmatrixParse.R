@@ -513,13 +513,25 @@ isCFM <- function(CFmatrix_file) {
 
 ## a help function
 formatNodelabel <- function(labels,highlight=NULL,highcolor="red"){
+
   if (!is.null(highlight)) {
 
     for (i in seq_along(highlight)) {
       key=highlight[i]
+
       serch_regrex=paste0("(?<=^|[^A-Za-z0-9])",key,"(?=$|[^A-Za-z0-9])")
-      replace_regrex=paste0('<FONT COLOR="',highcolor,'">',key,'</FONT> ')
+
+      if (length(highcolor)==1) {
+        replace_regrex=paste0('<FONT COLOR="',highcolor,'">',key,'</FONT> ')
+      } else if (length(highcolor)==length(highlight)) {
+        replace_regrex=paste0('<FONT COLOR="',highcolor[i],'">',key,'</FONT> ')
+      } else {
+        warning("highcolor is dont match to highlight length!")
+        replace_regrex=paste0('<FONT COLOR="',highcolor[1],'">',key,'</FONT> ')
+      }
+
       labels=gsub(serch_regrex,replace_regrex,labels,perl = TRUE)
+
     }
 
   }
