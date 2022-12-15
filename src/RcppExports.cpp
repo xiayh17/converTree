@@ -10,6 +10,17 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// isConflictFree
+bool isConflictFree(NumericMatrix cf_mat);
+RcppExport SEXP _converTree_isConflictFree(SEXP cf_matSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type cf_mat(cf_matSEXP);
+    rcpp_result_gen = Rcpp::wrap(isConflictFree(cf_mat));
+    return rcpp_result_gen;
+END_RCPP
+}
 // getChildListFromParentVector
 std::vector<std::vector<int> > getChildListFromParentVector(IntegerVector parents, int n);
 RcppExport SEXP _converTree_getChildListFromParentVector(SEXP parentsSEXP, SEXP nSEXP) {
@@ -73,6 +84,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_converTree_isConflictFree", (DL_FUNC) &_converTree_isConflictFree, 1},
     {"_converTree_getChildListFromParentVector", (DL_FUNC) &_converTree_getChildListFromParentVector, 2},
     {"_converTree_getNewickCode", (DL_FUNC) &_converTree_getNewickCode, 2},
     {"_converTree_init_boolMatrix", (DL_FUNC) &_converTree_init_boolMatrix, 3},
