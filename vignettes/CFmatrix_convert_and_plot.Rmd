@@ -33,15 +33,15 @@ res
 
 multicolored setting of highlight
 ```{r}
-treedata2gv(t_all,gvfile="tree.gv",highlight = c("M3","M42","M1"),highcolor = c("red","blue","#e67b2b"))
-res=DiagrammeR::grViz("tree_m.gv")
-res
+treedata2gv(t_all,gvfile="tree2.gv",highlight = c("M3","M42","M1"),highcolor = c("red","blue","#e67b2b"))
+res2=DiagrammeR::grViz("tree2.gv")
+res2
 ```
 
 
 ## save plot to file
 ```{r}
-svg=DiagrammeRsvg::export_svg(res)
-writeLines(svg,con = "test.svg")
+svg=DiagrammeRsvg::export_svg(res2)
+writeLines(svg,con = "test2.svg")
 ```
 

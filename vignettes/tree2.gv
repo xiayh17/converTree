@@ -1,0 +1,360 @@
+/* Created by igraph 1.3.1.9037 */
+digraph {
+  0 [
+    label=<->
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  1 [
+    label=<M16<br/>M17>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  2 [
+    label=<M29<br/>M30<br/>M31<br/>M32<br/>M33<br/>M34<br/>M35<br/>M36<br/>M37<br/>M38<br/>M39<br/>M40<br/>M41>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  3 [
+    label=<M4<br/>M5>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  4 [
+    label=<<FONT COLOR="#e67b2b">M1</FONT> <br/>M2<br/><FONT COLOR="red">M3</FONT> >
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  5 [
+    label=<sc1>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  6 [
+    label=<sc10_1>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  7 [
+    label=<sc11>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  8 [
+    label=<sc12>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  9 [
+    label=<sc13>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  10 [
+    label=<sc14>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  11 [
+    label=<sc15>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  12 [
+    label=<sc16_1>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  13 [
+    label=<sc17>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  14 [
+    label=<sc18>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  15 [
+    label=<sc19>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  16 [
+    label=<sc3>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  17 [
+    label=<sc4>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  18 [
+    label=<sc5>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  19 [
+    label=<sc6>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  20 [
+    label=<sc7>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  21 [
+    label=<sc8>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  22 [
+    label=<sc9>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  23 [
+    label=<M18>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  24 [
+    label=<M19<br/>M20<br/>M21<br/>M22<br/>M23>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  25 [
+    label=<M73>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  26 [
+    label=<M74<br/>M75<br/>M76<br/>M77<br/>M78<br/>M79>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  27 [
+    label=<M80<br/>M81<br/>M82>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  28 [
+    label=<<FONT COLOR="blue">M42</FONT> >
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  29 [
+    label=<M43<br/>M44<br/>M45>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  30 [
+    label=<M46>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  31 [
+    label=<M47<br/>M48<br/>M49>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  32 [
+    label=<M50<br/>M51>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  33 [
+    label=<M52>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  34 [
+    label=<M53>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  35 [
+    label=<M54<br/>M55<br/>M56>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  36 [
+    label=<M57>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  37 [
+    label=<M58<br/>M59<br/>M60<br/>M61<br/>M62<br/>M63>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  38 [
+    label=<M64<br/>M65<br/>M66<br/>M67<br/>M68>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  39 [
+    label=<M69<br/>M70<br/>M71<br/>M72>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  40 [
+    label=<M24<br/>M25<br/>M26>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  41 [
+    label=<M27<br/>M28>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  42 [
+    label=<M6>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  43 [
+    label=<M7<br/>M8>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  44 [
+    label=<M9>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  45 [
+    label=<M10<br/>M11<br/>M12<br/>M13<br/>M14>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  46 [
+    label=<M15>
+    style=filled
+    shape=ellipse
+    fillcolor=grey82
+  ];
+  47 [
+    label=<sc2>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  48 [
+    label=<sc10_2>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  49 [
+    label=<sc16_2>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+  50 [
+    label=<sc20>
+    style=filled
+    shape=box
+    fillcolor=white
+  ];
+
+  0 -> 1;
+  0 -> 2;
+  0 -> 3;
+  0 -> 4;
+  24 -> 5;
+  26 -> 6;
+  27 -> 7;
+  30 -> 8;
+  31 -> 9;
+  33 -> 10;
+  34 -> 11;
+  37 -> 12;
+  36 -> 13;
+  38 -> 14;
+  39 -> 15;
+  40 -> 16;
+  41 -> 17;
+  2 -> 18;
+  43 -> 19;
+  44 -> 20;
+  45 -> 21;
+  46 -> 22;
+  1 -> 23;
+  23 -> 24;
+  4 -> 25;
+  25 -> 26;
+  25 -> 27;
+  4 -> 28;
+  28 -> 29;
+  29 -> 30;
+  29 -> 31;
+  28 -> 32;
+  32 -> 33;
+  32 -> 34;
+  32 -> 35;
+  35 -> 36;
+  36 -> 37;
+  35 -> 38;
+  38 -> 39;
+  23 -> 40;
+  1 -> 41;
+  3 -> 42;
+  42 -> 43;
+  43 -> 44;
+  42 -> 45;
+  3 -> 46;
+  24 -> 47;
+  26 -> 48;
+  37 -> 49;
+  39 -> 50;
+}
