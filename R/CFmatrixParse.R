@@ -18,9 +18,35 @@
 #' cf2treedata(CFmatrix_file)
 cf2treedata <- function(CFmatrix_file) {
 
+  ## is CF
+  if (!isCFM(CFmatrix_file)) {
+    stop("Not a conflict free matrix!")
+  }
+
+  ## import data
   cf_mat <- readr::read_delim(CFmatrix_file,
-                delim = "\t", escape_double = FALSE,
-                trim_ws = TRUE)
+                              delim = "\t", escape_double = FALSE,
+                              trim_ws = TRUE, show_col_types = FALSE)
+
+  ## count mutations
+  sum_mut=colSums(cf_mat[,-1])
+  mut_names=colnames(cf_mat)[-1]
+
+  ## if there is a column all = 0
+  ## drop it
+  zero_index=sum_mut==0
+  zero_mut=mut_names[zero_index]
+  if (length(zero_mut)>0) {
+    warning(c(paste0(zero_mut,collapse = ",")," Not be contained in any cell. Removed!"))
+  }
+
+  ## if there is a column all = 1
+  ## set as root
+  all_mut_index=sum_mut==nrow(cf_mat)
+  all_mut=mut_names[all_mut_index]
+  if (length(all_mut)>0) {
+    warning(c(paste0(all_mut,collapse = ",")," found in all cells."))
+  }
 
   # duplicate process -------------------------------------------------------
   ## duplicate mutations and cells detecting
@@ -93,7 +119,7 @@ cf2treedata <- function(CFmatrix_file) {
     group_by(mutID) %>%
     mutate(count=n()) %>%
     group_by(cellID) %>%
-    mutate(rank = order(count,decreasing = TRUE))
+    mutate(rank = rank(-count))
 
   ## join cells mutations path
   ## a fake root
@@ -110,8 +136,8 @@ cf2treedata <- function(CFmatrix_file) {
     slice(which.max(rank))
 
   ## internal node
-  in_dat <- setdiff(cell2mut2,top_dat)
-  in_dat <- setdiff(in_dat,b_dat)
+  # in_dat <- dplyr::setdiff(cell2mut2,top_dat)
+  # in_dat <- dplyr::setdiff(in_dat,b_dat)
 
   ## some cells maybe only one mutation
   ## canbe find by
@@ -128,6 +154,9 @@ cf2treedata <- function(CFmatrix_file) {
     node=ncells+1,
     label=NA_character_
   )
+  # if (length(all_mut)>0) {
+  #   t_root$label=paste0(all_mut,collapse = "|")
+  # }
   root_node = t_root$parent
   m_root<-merge(t_root$parent,
                 unique(top_dat$mutID))
@@ -144,97 +173,144 @@ cf2treedata <- function(CFmatrix_file) {
     label=b_dat$cellID
   )
 
+  ## from leaves and root
+  ## number every mutation is possible
+  ## in each cell, rank convert to node number according to root and other cell
   link_mut <- function(x) {
+
     min = min(x)
     max = max(x)
 
     if (length(x)>2) {
       md = x[!x %in% c(min,max)]
       vec=c(min, rep(sort(md),each=2), max)
-    } else {
+    } else if (length(x)==2) {
       vec=c(min,max)
+    } else if (length(x)==1) {
+      vec=NULL
     }
-    mat=matrix(vec,nrow=2,ncol=length(vec)/2)
+    # vec_link=c(min-1,min,vec)
+    vec_link=vec
+    mat=matrix(vec_link,nrow=2,ncol=length(vec_link)/2)
     return(mat)
   }
 
   ## parse node number for each mutation (node)
-  for (i in seq_along(t_leaves$label)) {
-    cell = t_leaves$label[i]
-
+  cells = t_leaves$label
+  for (i in seq_along(cells)) {
+    # for (i in 1:8) {
+    cell = cells[i]
     df = cell2mut2[cell2mut2$cellID %in% cell,]
 
+    ## in the first cell, only according to root
+    ## rank add root node number directly
     if (i==1) {
+      # print(df)
       tmp_df=data.frame(
         mutIn = df$mutID,
         node = df$rank+root_node
       )
+      # print(tmp_df)
+      ## a link of node is also can be infered from node number
       link_o=link_mut(tmp_df$node)
-
+      ## first row be parent column
+      ## second row be node column
       link_df=data.frame(
         parent=link_o[1,],
         node=link_o[2,],
         label=link_o[2,]
       )
+      # print(link_df)
+      ## above tmp_df storage the mutations and node number
+      ## link_df storage the link of nodes
     } else {
-      mut_df = cell2mut2[cell2mut2$mutID %in% tmp_df$mutIn,]
-
+      # print(df)
+      ## according to other cells node number storage in tmp_df
+      ## check current cell mutations is show before
       mutNow = df$mutID
+      ## for these not include before
       mutNew = setdiff(mutNow,tmp_df$mutIn)
-      newNode = seq_along(mutNew) + max(tmp_df$node)
-      print(mutNew)
-      print(newNode)
+
+      # if there newNode exists
       if (length(mutNew)>0) {
+
+        ## add to the node number continuly
+        ## should rank as the same
+        before_end = max(tmp_df$node)
+        # newNode_s = before_end+1
+        # newNode_e = before_end+before_end
+        Ranks = df[df$mutID %in% mutNew,]$rank
+        newNode = Ranks-(min(Ranks)-1) + before_end
+
+        # storage New node number with olders
         tmp_df=data.frame(
           mutIn = c(tmp_df$mutIn,mutNew),
           node = c(tmp_df$node,newNode)
         )
-      }
 
-      if (length(mutNew)==1) {
-        pairRank=df[df$mutID == mutNew,]$rank-1
-        if (pairRank != 0) {
-          pairMut=df[df$rank == pairRank,]$mutID
-          pairNode=tmp_df[tmp_df$mutIn==pairMut,]$node
-          pairNodes=c(pairNode,newNode)
-          link_o=link_mut(pairNodes)
-          link_df=data.frame(
-            parent=c(link_df$parent,link_o[1,]),
-            node=c(link_df$node,link_o[2,]),
-            label=c(link_df$node,link_o[2,])
-          )
+        # for the rank 1 mutation
+        # it should be link to root, skip
+        # newNode rank
+        if (length(newNode)==1) {
+
+          newRank=df[df$mutID == mutNew,]$rank
+
+          if (newRank!=1) {
+
+            ## find rank-1 node as pair
+            pairMut=df[df$rank == (newRank-1),]$mutID
+            pairNode=tmp_df[tmp_df$mutIn==pairMut,]$node
+            pairNodes=c(pairNode,newNode)
+            # print(pairNodes)
+            link_o=link_mut(pairNodes)
+            link_df=data.frame(
+              parent=c(link_df$parent,link_o[1,]),
+              node=c(link_df$node,link_o[2,]),
+              label=c(link_df$node,link_o[2,])
+            )
+
+          }
+
+        } else if (length(newNode)>1) {
+
+          for (k in seq_along(mutNew)) {
+
+            newRank=df[df$mutID == mutNew[k],]$rank
+
+            if (newRank!=1) {
+
+              ## find rank-1 node as pair
+              # infer link of new nodes
+              pairMut=df[df$rank == (newRank-1),]$mutID
+              pairNode=tmp_df[tmp_df$mutIn==pairMut,]$node
+              pairNodes=c(pairNode,newNode[k])
+              # print(pairNodes)
+              link_o=link_mut(pairNodes)
+              # storage New link with olders
+              link_df=data.frame(
+                parent=c(link_df$parent,link_o[1,]),
+                node=c(link_df$node,link_o[2,]),
+                label=c(link_df$node,link_o[2,])
+              )
+
+            }
+
+          }
+
         }
-      }
-
-      if (length(mutNew)>=2) {
-        checkRank=df[df$mutID == mutNew[1],]$rank-1
-        if (checkRank != 0) {
-          pairMut=df[df$rank == checkRank,]$mutID
-          pairNode=tmp_df[tmp_df$mutIn==pairMut,]$node
-          pairNodes=c(pairNode,newNode)
-          link_o=link_mut(pairNodes)
-          link_df=data.frame(
-            parent=c(link_df$parent,link_o[1,]),
-            node=c(link_df$node,link_o[2,]),
-            label=c(link_df$node,link_o[2,])
-          )
-        } else {
-          link_o=link_mut(newNode)
-          link_df=data.frame(
-            parent=c(link_df$parent,link_o[1,]),
-            node=c(link_df$node,link_o[2,]),
-            label=c(link_df$node,link_o[2,])
-          )
-        }
 
       }
+
+
 
     }
-
 
   }
 
   link_df<-unique(link_df)
+
+  # link_df[link_df$parent==link_df$label,]
+  # unlist(link_df) |> unique() |> sort()
 
   ## map node number to tree data
   t_root$node <- plyr::mapvalues(t_root$node,
@@ -252,7 +328,7 @@ cf2treedata <- function(CFmatrix_file) {
                                      to = tmp_df$node,
                                      warn_missing = FALSE) %>% as.numeric()
 
-  t_all <- rbind(t_root,t_leaves,link_df)
+  t_all <- unique(rbind(t_root,t_leaves,link_df))
 
   if (identical(cell2mut2$mutID[!cell2mut2$mutID %in% t_all$label[grep("M",t_all$label)]] %>% unique(),character(0))) {
     message("Tree data bone seems ok")
@@ -370,6 +446,70 @@ treedata2gv<-function(treedata,gvfile="tree.gv",highlight=NULL,highcolor="red",
   # save the modified text to a new file
   writeLines(text, gvfile)
 }
+
+#' Conflict matrix or Not
+#'
+#' A logical return, TRUE for conflict free.
+#'
+#' @param CFmatrix_file a file path to CFMatrix file.
+#'
+#' @return a bool value
+#' @export
+#'
+#' @examples
+#' CFmatrix_file = system.file("extdata", "ground_truth_tree.CFMatrix", package = "converTree")
+#' isCFM(CFmatrix_file)
+isCFM <- function(CFmatrix_file) {
+
+  cf_mat <- readr::read_delim(CFmatrix_file,
+                              delim = "\t", escape_double = FALSE,
+                              trim_ws = TRUE, show_col_types = FALSE)
+
+  num_mat<-as.matrix(cf_mat[,-1])
+
+  res_bool <- isConflictFree(num_mat)
+
+  return(res_bool)
+
+}
+
+# R version code too slow
+# rewrite as function `isConflictFree` in is.conflict_free.cpp
+# is.conflict <- function(CFmatrix_file) {
+#
+#   cf_mat <- readr::read_delim(CFmatrix_file,
+#                               delim = "\t", escape_double = FALSE,
+#                               trim_ws = TRUE,show_col_types = FALSE)
+#
+#   conflict_free = TRUE
+#
+#   for (p in 2:ncol(cf_mat)) {
+#
+#     for (q in (p+1):ncol(cf_mat)) {
+#
+#       if (q <= ncol(cf_mat)) {
+#         oneone = FALSE
+#         zeroone = FALSE
+#         onezero = FALSE
+#         for (r in 1:nrow(cf_mat)) {
+#           print(c(r,p,q))
+#           print(c(unlist(cf_mat[r, p]),unlist(cf_mat[r, q])))
+#           if (cf_mat[r, p] == 1 & cf_mat[r, q] == 1) oneone = TRUE
+#           if (cf_mat[r, p] == 0 & cf_mat[r, q] == 1) zeroone = TRUE
+#           if (cf_mat[r, p] == 1 & cf_mat[r, q] == 0) onezero = TRUE
+#           print(c(oneone,zeroone,onezero))
+#         }
+#         if (all(oneone,zeroone,onezero)) {
+#           conflict_free = FALSE
+#           print(conflict_free)
+#           return(conflict_free)
+#         }
+#       }
+#
+#     }
+#   }
+#
+# }
 
 ## a help function
 formatNodelabel <- function(labels,highlight=NULL,highcolor="red"){
