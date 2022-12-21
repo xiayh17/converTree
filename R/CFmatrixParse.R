@@ -187,7 +187,7 @@ cf2treedata <- function(CFmatrix_file) {
     } else if (length(x)==2) {
       vec=c(min,max)
     } else if (length(x)==1) {
-      vec=NULL
+      stop("vec must be of a vector of length greater than or equal to 2!")
     }
     # vec_link=c(min-1,min,vec)
     vec_link=vec
@@ -201,7 +201,7 @@ cf2treedata <- function(CFmatrix_file) {
     # for (i in 1:8) {
     cell = cells[i]
     df = cell2mut2[cell2mut2$cellID %in% cell,]
-
+    # print(cell)
     ## in the first cell, only according to root
     ## rank add root node number directly
     if (i==1) {
@@ -212,7 +212,13 @@ cf2treedata <- function(CFmatrix_file) {
       )
       # print(tmp_df)
       ## a link of node is also can be infered from node number
-      link_o=link_mut(tmp_df$node)
+      newNode = tmp_df$node
+      if (length(newNode) == 1) {
+        pairsNodes = c(root_node,newNode)
+        link_o=link_mut(pairsNodes)
+      } else {
+        link_o=link_mut(newNode)
+      }
       ## first row be parent column
       ## second row be node column
       link_df=data.frame(
@@ -230,7 +236,7 @@ cf2treedata <- function(CFmatrix_file) {
       mutNow = df$mutID
       ## for these not include before
       mutNew = setdiff(mutNow,tmp_df$mutIn)
-
+      # print(mutNew)
       # if there newNode exists
       if (length(mutNew)>0) {
 
@@ -249,7 +255,7 @@ cf2treedata <- function(CFmatrix_file) {
         )
 
         # for the rank 1 mutation
-        # it should be link to root, skip
+        # it should be link to root, which already in t_root, skip
         # newNode rank
         if (length(newNode)==1) {
 
