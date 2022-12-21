@@ -20,16 +20,17 @@ Imports:
     Rcpp,
     readr,
     stats,
+    stringr,
     tidyr,
     treeio,
     utils
 Suggests:
+    DiagrammeR,
+    DiagrammeRsvg,
     ggtree,
     gridExtra,
     knitr,
-    rmarkdown,
-    DiagrammeR,
-    DiagrammeRsvg
+    rmarkdown
 LinkingTo: 
     Rcpp
 VignetteBuilder: 
