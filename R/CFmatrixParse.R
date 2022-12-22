@@ -368,7 +368,7 @@ cf2treedata <- function(CFmatrix_file) {
       newnode=keynode+(1:length(newcell))
       newparent=na.omit(t_all$parent[t_all$label == cell])+length(newcell)
       new_df = data.frame(
-        parent=newparent,
+        parent=rep(newparent,length(newcell)),
         node=newnode,
         label=newcell
       )
