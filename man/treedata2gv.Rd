@@ -9,6 +9,8 @@ treedata2gv(
   gvfile = "tree.gv",
   highlight = NULL,
   highcolor = "red",
+  lightNodeKey = NULL,
+  lightNodeColor = "red",
   is_cell = "auto_name",
   cell_prefix = "sc",
   cell_style = "filled",
@@ -27,6 +29,10 @@ treedata2gv(
 \item{highlight}{which mutation or cell name to highlight}
 
 \item{highcolor}{highlight color}
+
+\item{lightNodeKey}{mutation or cell name to target a node}
+
+\item{lightNodeColor}{color of targeted node}
 
 \item{is_cell}{`auto_name` or `auto_position` or a vector list of bool}
 

@@ -391,6 +391,8 @@ cf2treedata <- function(CFmatrix_file) {
 #' @param gvfile a file name to save result
 #' @param highlight which mutation or cell name to highlight
 #' @param highcolor highlight color
+#' @param lightNodeKey mutation or cell name to target a node
+#' @param lightNodeColor color of targeted node
 #' @param is_cell `auto_name` or `auto_position` or a vector list of bool
 #' @param cell_prefix if `auto_name` used in is_cell, a common prefix for cell name
 #' @param cell_style more in [here](https://graphviz.org/docs/attrs/style/)
