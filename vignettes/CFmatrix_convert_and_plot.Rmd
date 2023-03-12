@@ -25,11 +25,22 @@ t_all = cf2treedata(CFmatrix_file)
 ```
 
 # vis
+
+single color highlight mutations
 ```{r}
 treedata2gv(t_all,gvfile="tree.gv",highlight = c("M3","M42","M1"))
 res=DiagrammeR::grViz("tree.gv")
 res
 ```
+
+single color highlight node
+```{r}
+treedata2gv(t_all,gvfile="tree1.gv",highlight = c("M3","M42","M1"),highcolor = c("red","blue","#e67b2b"),
+            lightNodeKey=c("M4","M9","sc8","M1"),lightNodeColor='#b3e2cd')
+res1=DiagrammeR::grViz("tree1.gv")
+res1
+```
+
 
 multicolored setting of highlight
 ```{r}
@@ -38,10 +49,17 @@ res2=DiagrammeR::grViz("tree2.gv")
 res2
 ```
 
+highlight Node
+```{r}
+treedata2gv(t_all,gvfile="tree3.gv",highlight = c("M3","M42","M1"),highcolor = c("red","blue","#e67b2b"),
+            lightNodeKey=c("M4","M9","sc8","M1"),lightNodeColor=c('#f4cae4','#fdcdac','#cbd5e8','#b3e2cd'))
+res3=DiagrammeR::grViz("tree3.gv")
+res3
+```
 
 ## save plot to file
 ```{r}
-svg=DiagrammeRsvg::export_svg(res2)
-writeLines(svg,con = "test2.svg")
+svg=DiagrammeRsvg::export_svg(res3)
+writeLines(svg,con = "test3.svg")
 ```
 

@@ -409,7 +409,11 @@ cf2treedata <- function(CFmatrix_file) {
 #' CFmatrix_file = system.file("extdata", "ground_truth_tree.CFMatrix", package = "converTree")
 #' t_all = cf2treedata(CFmatrix_file)
 #' treedata2gv(t_all,gvfile="tree.gv",highlight = c("M3","M42","M1"))
-treedata2gv<-function(treedata,gvfile="tree.gv",highlight=NULL,highcolor="red",
+treedata2gv<-function(treedata,gvfile="tree.gv",
+                      highlight=NULL,
+                      highcolor="red",
+                      lightNodeKey=NULL,
+                      lightNodeColor="red",
                       is_cell="auto_name",cell_prefix="sc",
                       cell_style="filled",cell_shape="box",cell_fill="white",
                       mut_style="filled",mut_shape="ellipse",mut_fill="grey82") {
@@ -437,6 +441,9 @@ treedata2gv<-function(treedata,gvfile="tree.gv",highlight=NULL,highcolor="red",
   vertex.attributes(g)$style=ifelse(is_cell,cell_style,mut_style)
   vertex.attributes(g)$shape=ifelse(is_cell,cell_shape,mut_shape)
   vertex.attributes(g)$fillcolor=ifelse(is_cell,cell_fill,mut_fill)
+  vertex.attributes(g)$fillcolor=lightNode(vertex.attributes(g)$label,
+                                           vertex.attributes(g)$fillcolor,
+                                           lightNodeKey,lightNodeColor)
   igraph::write_graph(g, gvfile, "dot")
   # read the text file
   text <- readLines(gvfile)
@@ -516,6 +523,37 @@ isCFM <- function(CFmatrix_file) {
 #   }
 #
 # }
+
+## light
+lightNode <- function(labels,fillcolor,lightNodeKey=NULL,lightNodeColor="red"){
+
+  if (!is.null(lightNodeKey)) {
+
+    for (i in seq_along(lightNodeKey)) {
+      key=lightNodeKey[i]
+
+      serch_regrex=paste0("(?<=^|[^A-Za-z0-9])",key,"(?=$|[^A-Za-z0-9])")
+
+      loc_index <- grep(serch_regrex,labels,perl = TRUE)
+
+      fillcolor[loc_index] = lightNodeColor
+
+      if (length(lightNodeColor)==1) {
+        fillcolor[loc_index] = lightNodeColor
+      } else if (length(lightNodeColor)==length(lightNodeKey)) {
+        fillcolor[loc_index] = lightNodeColor[i]
+      } else {
+        warning("lightNodeColor is dont match to lightNodeKey length!")
+        fillcolor[loc_index] = lightNodeColor[1]
+      }
+
+    }
+
+  }
+
+  return(fillcolor)
+
+}
 
 ## a help function
 formatNodelabel <- function(labels,highlight=NULL,highcolor="red"){
