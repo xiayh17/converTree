@@ -536,8 +536,6 @@ lightNode <- function(labels,fillcolor,lightNodeKey=NULL,lightNodeColor="red"){
 
       loc_index <- grep(serch_regrex,labels,perl = TRUE)
 
-      fillcolor[loc_index] = lightNodeColor
-
       if (length(lightNodeColor)==1) {
         fillcolor[loc_index] = lightNodeColor
       } else if (length(lightNodeColor)==length(lightNodeKey)) {
