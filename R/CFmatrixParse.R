@@ -30,15 +30,27 @@ cf2treedata <- function(CFmatrix_file) {
 
   ## count mutations
   sum_mut=colSums(cf_mat[,-1])
+  sum_cell=rowSums(cf_mat[,-1])
   mut_names=colnames(cf_mat)[-1]
 
   ## if there is a column all = 0
   ## drop it
-  zero_index=sum_mut==0
-  zero_mut=mut_names[zero_index]
+  zero_muts_index=sum_mut==0
+  zero_mut=mut_names[zero_muts_index]
   if (length(zero_mut)>0) {
     warning(c(paste0(zero_mut,collapse = ",")," Not be contained in any cell. Removed!"))
   }
+
+  ## if there is a row all = 0
+  ## drop it
+  zero_cells_index=sum_cell==0
+  if (sum(zero_cells_index)>0) {
+    warning(c(length(zero_cells_index)," Cells Not contain any mutation. Removed!"))
+  }
+
+  ## remove
+  cf_mat=cf_mat[!zero_cells_index,mut_names[!zero_muts_index]]
+
 
   ## if there is a column all = 1
   ## set as root
