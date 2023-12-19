@@ -49,8 +49,7 @@ cf2treedata <- function(CFmatrix_file) {
   }
 
   ## remove
-  cf_mat=cf_mat[!zero_cells_index,mut_names[!zero_muts_index]]
-
+  cf_mat=cf_mat[!zero_cells_index,c(TRUE,!zero_muts_index)]
 
   ## if there is a column all = 1
   ## set as root
