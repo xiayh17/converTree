@@ -28,6 +28,9 @@ cf2treedata <- function(CFmatrix_file) {
                               delim = "\t", escape_double = FALSE,
                               trim_ws = TRUE, show_col_types = FALSE)
 
+  ## replace , and ; in mutnames
+  colnames(cf_mat) <- formatMutnames(colnames(cf_mat))
+
   ## count mutations
   sum_mut=colSums(cf_mat[,-1])
   sum_cell=rowSums(cf_mat[,-1])
@@ -593,4 +596,14 @@ formatNodelabel <- function(labels,highlight=NULL,highcolor="red"){
   labels=paste0("<",labels,">")
   labels=gsub("\\|",'<br/>',labels)
   return(labels)
+}
+
+formatMutnames <- function(mutnames) {
+  ## if , | or ; in mutnames, replace with _
+  any_no <- grep("[,\\|;]", mutnames)
+  if (length(any_no) > 0){
+    warning("Mutations names contains , | or ;, replaced with _")
+  }
+  mutnames <- gsub("[,\\|;]", "_", mutnames)
+  return(mutnames)
 }
