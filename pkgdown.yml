@@ -1,11 +1,10 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: 3.1.11
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   CFmatrix_convert_and_plot: CFmatrix_convert_and_plot.html
   Stack_Mutation_Principle: Stack_Mutation_Principle.html
-last_built: 2024-01-07T10:17Z
+last_built: 2024-09-29T10:59Z
 urls:
   reference: http://xiayh17.top/converTree/reference
   article: http://xiayh17.top/converTree/articles
-

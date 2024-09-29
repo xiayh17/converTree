@@ -1,4 +1,4 @@
-/* Created by igraph @PACKAGE_VERSION@ */
+/* Created by igraph 0.10.10-81-g857a12506 */
 digraph {
   0 [
     label=<->
