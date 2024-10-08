@@ -48,7 +48,7 @@ cf2treedata <- function(CFmatrix_file) {
   ## drop it
   zero_cells_index=sum_cell==0
   if (sum(zero_cells_index)>0) {
-    warning(c(length(zero_cells_index)," Cells Not contain any mutation. Removed!"))
+    warning(c(sum(zero_cells_index)," Cells Not contain any mutation. Removed!"))
   }
 
   ## remove
