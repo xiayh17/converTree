@@ -1,3 +1,152 @@
+#' Convert CF matrix to tree data optimized
+#'
+#' CF matrix is conflict-free matrix, tree data is a data table contains
+#' `from`, `to` and `label` columns at least.
+#'
+#' @param CFmatrix_file a file path to CFMatrix file.
+#'
+#' @importFrom readr read_delim
+#' @importFrom tidyr pivot_longer
+#' @importFrom dplyr rename group_by slice
+#' @importFrom plyr mapvalues
+#'
+#' @return a dataframe
+#' @export
+#'
+#' @examples
+#' CFmatrix_file = system.file("extdata", "ground_truth_tree.CFMatrix", package = "converTree")
+#' cf2treedata(CFmatrix_file)
+cf2treedata_optimized <- function(CFmatrix_file) {
+  # 验证是否为无冲突矩阵
+  if (!isCFM(CFmatrix_file)) {
+    stop("Not a conflict free matrix!")
+  }
+  
+  # 读取数据
+  cf_mat <- readr::read_delim(CFmatrix_file, delim = "\t", trim_ws = TRUE, show_col_types = FALSE)
+  colnames(cf_mat) <- formatMutnames(colnames(cf_mat))
+  
+  # 预处理 - 向量化操作替代循环
+  sum_mut <- colSums(cf_mat[,-1])
+  sum_cell <- rowSums(cf_mat[,-1])
+  mut_names <- colnames(cf_mat)[-1]
+  
+  # 过滤零值数据
+  zero_muts_index <- sum_mut == 0
+  zero_cells_index <- sum_cell == 0
+  cf_mat <- cf_mat[!zero_cells_index, c(TRUE, !zero_muts_index)]
+  
+  # 使用哈希表处理重复模式
+  # 突变模式哈希
+  mut_patterns <- apply(cf_mat[,-1], 2, function(x) paste(x, collapse=""))
+  pattern_groups <- split(colnames(cf_mat)[-1], mut_patterns)
+  
+  # 细胞模式哈希
+  cell_patterns <- apply(cf_mat[,-1], 1, function(x) paste(x, collapse=""))
+  cell_groups <- split(cf_mat[[1]], cell_patterns)
+  
+  # 选择代表性突变和细胞
+  unique_mut_patterns <- names(pattern_groups)
+  representative_muts <- sapply(pattern_groups, `[`, 1)
+  cf_mat_reduced <- cf_mat[, c(TRUE, colnames(cf_mat)[-1] %in% representative_muts)]
+  
+  # 创建突变层次结构（使用包含关系）
+  # 使用矩阵运算替代循环
+  mut_matrix <- as.matrix(cf_mat_reduced[,-1])
+  mut_names <- colnames(mut_matrix)
+  n_muts <- ncol(mut_matrix)
+  
+  # 创建邻接矩阵表示突变之间的关系
+  # mj 包含 mi 的条件: 如果 mi==1，那么 mj 必须==1，但反之不必然
+  adjacency <- matrix(FALSE, n_muts, n_muts)
+  for(i in 1:n_muts) {
+    for(j in 1:n_muts) {
+      if(i != j) {
+        # 向量化操作检查包含关系
+        adjacency[i,j] <- all(mut_matrix[,j][mut_matrix[,i] == 1] == 1)
+      }
+    }
+  }
+  
+  # 构建树 - 使用邻接矩阵直接构建树结构
+  # 找出每个突变的直接父节点（最近的包含节点）
+  parents <- rep(NA, n_muts)
+  for(i in 1:n_muts) {
+    # 找到所有包含当前突变的突变
+    containers <- which(adjacency[i,])
+    if(length(containers) > 0) {
+      # 找出最小的包含集（直接父节点）
+      min_containers <- containers[!apply(adjacency[containers, containers, drop=FALSE], 1, any)]
+      if(length(min_containers) == 1) {
+        parents[i] <- min_containers
+      } else {
+        # 多个父节点情况 - 需要额外处理
+        parents[i] <- n_muts + 1  # 连接到根节点
+      }
+    } else {
+      parents[i] <- n_muts + 1  # 无父节点连接到根节点
+    }
+  }
+  
+  # 创建树数据结构
+  tree_data <- data.frame(
+    parent = c(parents, n_muts + 1),  # 最后一个是根节点的自循环
+    node = c(1:n_muts, n_muts + 1),
+    label = c(mut_names, NA)
+  )
+  
+  # 添加细胞作为叶节点
+  cell_nodes <- data.frame(
+    parent = sapply(1:nrow(cf_mat_reduced), function(i) {
+      muts_in_cell <- which(mut_matrix[i,] == 1)
+      if(length(muts_in_cell) > 0) {
+        # 找出细胞的最具体突变（没有子节点的突变）
+        specific_muts <- muts_in_cell[!apply(adjacency[,muts_in_cell, drop=FALSE], 2, any)]
+        if(length(specific_muts) == 1) {
+          return(specific_muts)
+        }
+      }
+      return(n_muts + 1)  # 连接到根节点
+    }),
+    node = n_muts + 1 + 1:nrow(cf_mat_reduced),
+    label = cf_mat_reduced[[1]]
+  )
+  
+  # 合并树结构
+  tree_data <- rbind(tree_data, cell_nodes)
+  
+  # 处理重复模式 - 合并标签
+  for(pattern in names(pattern_groups)) {
+    muts <- pattern_groups[[pattern]]
+    if(length(muts) > 1) {
+      representative <- muts[1]
+      tree_data$label[tree_data$label == representative] <- paste(muts, collapse="|")
+    }
+  }
+  
+  # 处理重复细胞
+  for(pattern in names(cell_groups)) {
+    cells <- cell_groups[[pattern]]
+    if(length(cells) > 1) {
+      # 为重复细胞创建新节点
+      rep_cell <- cells[1]
+      rep_idx <- which(tree_data$label == rep_cell)
+      rep_parent <- tree_data$parent[rep_idx]
+      
+      # 添加其他重复细胞
+      for(i in 2:length(cells)) {
+        tree_data <- rbind(tree_data, data.frame(
+          parent = rep_parent,
+          node = max(tree_data$node) + 1,
+          label = cells[i]
+        ))
+      }
+    }
+  }
+  
+  return(tree_data)
+}
+
 #' Convert CF matrix to tree data
 #'
 #' CF matrix is conflict-free matrix, tree data is a data table contains
